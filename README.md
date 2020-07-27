@@ -15,7 +15,7 @@ The Operation System (OS) base on ESP8266_RTOS_SDK
 
 ### Test OTA server ###
 
-* curl -v https://<ip>:<port>/<file></br>
+* curl -v https://[ip]:[port]/[file]</br>
 
 ### Error code ###
 * -0x7f00 : MBEDTLS_ERR_SSL_ALLOC_FAILED</br>
