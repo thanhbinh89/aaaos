@@ -2,11 +2,13 @@
 #define __AAA_H__
 
 #ifdef __cplusplus
-extern "C++"
+extern "C"
 {
 #endif
 
 #include <stdint.h>
+#include <stdbool.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 
@@ -18,14 +20,13 @@ extern "C++"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
 
-#include "aaa_macros.h"
-
-#define AAA_VERSION "1.0"
+#define AAA_VERSION "1.1"
 
 #define AAA_TASK_QUEUE_LENGTH (16)
 
 #define AAA_USER_DEFINE_SIG 10
 
+/* Task depth in bytes = AAATaskDepth_t * sizeof( portSTACK_TYPE ) */
 typedef enum eAAATaskDepth
 {
 	AAA_TASK_DEPTH_LOW = 1024,
@@ -36,10 +37,10 @@ typedef enum eAAATaskDepth
 
 typedef enum eAAATaskPriority
 {
-	AAA_TASK_PRIORITY_LOW = 2,
-	AAA_TASK_PRIORITY_NORMAL = 3,
-	AAA_TASK_PRIORITY_HIGH = 4,
-	AAA_TASK_PRIORITY_MAX = 5,
+	AAA_TASK_PRIORITY_LOW = configMAX_PRIORITIES - 3,
+	AAA_TASK_PRIORITY_NORMAL,
+	AAA_TASK_PRIORITY_HIGH,
+	AAA_TASK_PRIORITY_MAX,
 } AAATaskPriority_t;
 
 typedef struct tAAATask
@@ -59,6 +60,8 @@ typedef struct tAAAMsg
 	void *data;
 } AAAMsg_t;
 
+typedef TimerHandle_t AAATimer_t;
+
 /******************************************************************************
 * task function
 *******************************************************************************/
@@ -69,10 +72,14 @@ extern void AAATaskInit();
 extern void AAAWaitAllTaskStarted();
 
 /* function exchange messages */
-extern int AAATaskPostMsg(uint32_t, uint32_t, void *, uint32_t);
-extern int AAATaskPostMsgFromISR(uint32_t, uint32_t, void *, uint32_t);
-extern int AAATaskRecvMsg(uint32_t, uint32_t *, void **, uint32_t *);
+extern bool AAATaskPostMsg(uint32_t, uint32_t, void *, uint32_t);
+extern bool AAATaskPostMsgFromISR(uint32_t, uint32_t, void *, uint32_t);
+extern bool AAATaskRecvMsg(uint32_t, uint32_t *, void **, uint32_t *);
 extern void AAAFreeMsg(void *);
+
+/* function timer */
+extern AAATimer_t AAATimerSet(uint32_t tId, uint32_t sig, void *msg, uint32_t len, uint32_t period, bool reload);
+extern void AAATimerRemove(AAATimer_t timer);
 
 #ifdef __cplusplus
 }
