@@ -28,7 +28,7 @@
 #define SYS_ASSERT(cond)                                     \
     do                                                       \
     {                                                        \
-        if (cond)                                            \
+        if (!(cond))                                            \
         {                                                    \
             SYS_LOGE("ASSERT", "%s:%d", __FILE__, __LINE__); \
             if (SYS_ASSERT_RESTART)                          \
